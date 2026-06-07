@@ -6,6 +6,7 @@ import { Beats } from "@/components/Beats";
 import { About } from "@/components/About";
 import { Connect } from "@/components/Connect";
 import { Footer } from "@/components/Footer";
+import { AudioGuide } from "@/components/AudioGuide";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
         <Connect />
       </main>
       <Footer />
+      <AudioGuide />
     </div>
   );
 }
