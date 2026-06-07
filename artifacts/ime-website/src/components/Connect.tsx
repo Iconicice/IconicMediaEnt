@@ -23,7 +23,7 @@ export function Connect() {
       name: "Facebook Page",
       icon: SiFacebook,
       handle: "Ice Media Entertainment (@weedsmokersZA)",
-      tooltipOnly: true,
+      url: "https://www.facebook.com/weedsmokersZA",
     },
     {
       name: "TikTok",
