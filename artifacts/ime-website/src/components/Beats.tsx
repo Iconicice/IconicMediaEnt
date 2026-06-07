@@ -17,14 +17,13 @@ const beats = [
   {
     title: "Mystic",
     price: "R150",
-    // NOTE: If this link seems wrong, confirm with Ice — Mystic & Abracadabra share the same ID from the original list.
-    url: "https://voloco.resonantcavity.com/applinks/beats?id=5dcf92b2-1ad5-46fd-a7ef-64bdf4f404f1",
+    url: "https://voloco.resonantcavity.com/applinks/beats?id=6e61688e-1ec7-4b06-9f42-e2b6c012ae3a",
     vibe: "Deep • Soulful",
   },
   {
     title: "Abracadabra",
     price: "R200",
-    url: "https://voloco.resonantcavity.com/applinks/beats?id=5dcf92b2-1ad5-46fd-a7ef-64bdf4f404f1",
+    url: "https://voloco.resonantcavity.com/applinks/beats?id=af995cb4-1909-4df2-ac8a-1edf46a48997",
     vibe: "Hypnotic • Powerful",
     featured: true,
   },
