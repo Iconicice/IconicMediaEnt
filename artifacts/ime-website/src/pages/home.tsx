@@ -7,6 +7,7 @@ import { About } from "@/components/About";
 import { Connect } from "@/components/Connect";
 import { Footer } from "@/components/Footer";
 import { AudioGuide } from "@/components/AudioGuide";
+import { ImeAssistant } from "@/components/ImeAssistant";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
       </main>
       <Footer />
       <AudioGuide />
+      <ImeAssistant />
     </div>
   );
 }
