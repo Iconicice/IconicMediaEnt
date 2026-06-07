@@ -3,50 +3,61 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Headphones, X, Play, Pause, Square, Volume2, ChevronDown, ChevronUp } from "lucide-react";
 
 const SITE_SUMMARY = `
-Welcome to Ice Media Entertainment — I.M.E.
+Alright. Settle in. We are about to take a little tour of Ice Media Entertainment. Also known as... I.M.E. Yes, like the letter. Very clean. Very intentional. Very Ice.
 
-We are a forward-thinking music production studio built by Ice, a COO, artist, and long-game strategist. 
-Our motto: Silent moves, loud results.
+So. What is I.M.E? Good question. We are a music production studio. But not just any studio. We are the kind of studio that plays the long game, while everyone else is out here chasing clout. Founded by Ice himself. COO. Artist. Forward thinker. The man does not rush. And honestly? Neither should you.
 
-What we offer:
+Our motto is: Silent moves. Loud results. Read that again. We will wait.
 
-Remote Production and Mixing. No matter where you are in the world, send us your raw vocals and we engineer the magic off-site, delivering a polished, professional masterpiece straight to you.
+Now. What do we actually do? Let us walk through it.
 
-Custom I.M.E Beats. Looking for that perfect sound? We craft original instrumentals tailored to your vibe — built to shake the industry.
+First up. Remote Production and Mixing. You do not even need to leave your house. Send us your raw vocals. Yes, even the ones you recorded at two in the morning that you thought were terrible. We will engineer the magic, off-site, and hand you back something that sounds like you spent a week in a professional studio. Because you kind of did. Just remotely.
 
-On-Site Studio Recording. Currently paused while we upgrade and re-wire for the future. Check back soon.
+Second. Custom I.M.E Beats. You want something that hits different? Something that was made specifically for your vibe and nobody else's? That is what we do. Original instrumentals. Built from scratch. Ready to shake the industry... or at least your speakers.
 
-Buy Beats. Our catalogue is live on Voloco. Available now:
-Fairies, for 75 Rand. Escape, for 85 Rand. Mystic, for 150 Rand. And our premium track — Abracadabra, for 200 Rand.
-All beats can be purchased directly through Voloco.
+Third. On-Site Studio Recording. Now. About this one. It is currently... paused. We are re-wiring and upgrading the whole setup for the future. Think of it like a butterfly. It went in a caterpillar. It will come out something magnificent. Check back soon.
 
-Our philosophy: At I.M.E, we respect the old-school ways of making music, but we are wiring the future with our own hands. We build solid, long-lasting foundations for artists. Feet on the ground. Eyes on the stars.
+Now. The part you have been scrolling for. The beats.
 
-Ready to work with us? Tap in on TikTok, Instagram, X, YouTube, SoundCloud, Beatstars, or the Voloco creator page. Links are all available in the Connect section.
+We have four tracks available right now on Voloco. Here they are.
 
-That's Ice Media Entertainment. Let's create something timeless.
+Fairies. Seventy-five Rand. Dreamy, ethereal, perfect for when you want to sound like you live in a forest but make it cool.
+
+Escape. Eighty-five Rand. Atmospheric, dark, for when life gets a bit much and you need a soundtrack to disappear to.
+
+Mystic. One hundred and fifty Rand. Deep and soulful. For the artist who has layers. You know the type.
+
+And finally. The big one. Abracadabra. Two hundred Rand. Our premium track. Hypnotic. Powerful. The name alone should tell you everything. Abracadabra. Boom. Your music career just changed.
+
+All four are available directly on Voloco. Just click the card. Simple.
+
+Our philosophy? We respect the old-school ways. We honour the craft. But we are also wiring the future with our own hands. Feet on the ground. Eyes on the stars. And apparently, beats on Voloco.
+
+Ready to connect? You can find us on TikTok, Instagram, X, YouTube, SoundCloud, Beatstars, and Voloco. All the links are right there in the Connect section. Just scroll down and tap in.
+
+That is Ice Media Entertainment. I.M.E. And that... was your audio tour. You are welcome.
 `.trim();
 
 const SECTIONS = [
   {
     label: "Home",
-    text: "Welcome to Ice Media Entertainment — I.M.E. Silent moves, loud results. We equip artists with the exact tools they need to make serious noise.",
+    text: "Welcome to Ice Media Entertainment. I.M.E. Silent moves, loud results. We equip artists with the exact tools they need to make serious noise. And no, that is not a threat. It is a promise. A very calm, very deliberate promise.",
   },
   {
     label: "Services",
-    text: "Our services include Remote Production and Mixing, Custom I.M.E Beats, and On-Site Studio Recording, which is currently paused while we upgrade for the future.",
+    text: "Services. Three of them. First, Remote Production and Mixing. You send the vocals, we send back a masterpiece. You do not even have to put on shoes. Second, Custom I.M.E Beats. Original instrumentals, built for your vibe specifically. And third, On-Site Studio Recording. Which is currently on pause. Do not panic. It is upgrading. Like a software update, but for a whole studio. Good things take time.",
   },
   {
     label: "Buy Beats",
-    text: "Our beats are available on Voloco. Fairies for 75 Rand. Escape for 85 Rand. Mystic for 150 Rand. And our premium track, Abracadabra, for 200 Rand.",
+    text: "Beats. Four of them. All original. All on Voloco. Fairies, for seventy-five Rand. Light and dreamy. Escape, for eighty-five Rand. Dark and atmospheric. Mystic, for one fifty. Deep and soulful. And then there is Abracadabra. Two hundred Rand. Our premium track. You say the name once and suddenly your whole creative life makes sense. Click any card to go straight to Voloco and grab it.",
   },
   {
     label: "About",
-    text: "The Architects of Tomorrow's Sound. At I.M.E, we respect the old-school ways of making music, but we are wiring the future with our own hands. Founded by Ice — COO, artist, and forward-thinker — we build solid, long-lasting foundations for artists.",
+    text: "The Architects of Tomorrow's Sound. Founded by Ice. COO. Artist. Forward thinker. The kind of person who plays chess while everyone else is playing checkers. At I.M.E, we respect where music comes from. The old school. The craft. The culture. But we are also building the future with our own hands. Feet on the ground. Eyes on the stars. Let us create something timeless. No pressure though.",
   },
   {
     label: "Connect",
-    text: "Ready to take your music to the next level? Find us on TikTok, Instagram, X, YouTube, SoundCloud, Beatstars, and Voloco. Links are all in the Connect section.",
+    text: "Ready to tap in? Good. Find us on TikTok, Instagram, X, YouTube, SoundCloud, Beatstars, and Voloco. All the links are right here in the Connect section. Just scroll down and click. It is that easy. No excuses. We are literally one tap away.",
   },
 ];
 
@@ -57,7 +68,7 @@ export function AudioGuide() {
   const [state, setState] = useState<ReadingState>("idle");
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
-  const [rate, setRate] = useState(1);
+  const [rate, setRate] = useState(0.75);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const supported = typeof window !== "undefined" && "speechSynthesis" in window;
 
