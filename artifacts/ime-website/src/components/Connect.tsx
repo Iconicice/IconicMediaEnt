@@ -17,13 +17,13 @@ export function Connect() {
       name: "Facebook (Personal)",
       icon: SiFacebook,
       handle: "Mokgoko Inolofatseng",
-      tooltipOnly: true,
+      url: "https://www.facebook.com/ino.mokgoko",
     },
     {
       name: "Facebook Page",
       icon: SiFacebook,
-      handle: "Ice Media Entertainment (@weedsmokersZA)",
-      url: "https://www.facebook.com/weedsmokersZA",
+      handle: "Iconic Media Entertainment",
+      url: "https://www.facebook.com/iconicmediaentertainment",
     },
     {
       name: "TikTok",
