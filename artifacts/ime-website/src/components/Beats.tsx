@@ -10,7 +10,7 @@ const beats = [
   },
   {
     title: "Escape",
-    price: "R100",
+    price: "R85",
     url: "https://voloco.resonantcavity.com/applinks/beats?id=6e61688e-1ec7-4b06-9f42-e2b6c012ae3a",
     vibe: "Atmospheric • Dark",
   },
