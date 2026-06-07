@@ -6,7 +6,7 @@ const ICE_IDENTITIES = [
     label: "Iconic",
     suffix: ".ice",
     url: "https://www.facebook.com/ino.mokgoko",
-    hint: "Personal",
+    hint: "Personal Facebook",
   },
   {
     label: "maNiGGr",
@@ -19,6 +19,19 @@ const ICE_IDENTITIES = [
     suffix: ".ice",
     url: "https://www.facebook.com/iconicmediaentertainment",
     hint: "I.M.E Page",
+  },
+  {
+    label: "Icynigma",
+    suffix: ".ice",
+    url: "WHATSAPP_PLACEHOLDER",
+    hint: "WhatsApp",
+  },
+  {
+    label: "iconicrecords",
+    suffix: ".ice",
+    url: "#contact",
+    hint: "All Links",
+    internal: true,
   },
 ];
 
@@ -74,36 +87,40 @@ export function About() {
               <p className="text-sm font-semibold text-white/30 uppercase tracking-widest mb-5">
                 Find him as
               </p>
-              <div className="flex flex-wrap gap-3">
-                {ICE_IDENTITIES.map((id) => (
-                  <a
-                    key={id.label}
-                    href={id.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-testid={`link-ice-identity-${id.label.toLowerCase()}`}
-                    className="group relative inline-flex items-center gap-1 px-5 py-2.5 rounded-full border border-primary/20 bg-primary/5 hover:bg-primary/15 hover:border-primary/60 transition-all duration-300"
-                  >
-                    {/* Glow on hover */}
-                    <span className="absolute inset-0 rounded-full bg-primary/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div className="flex flex-wrap gap-3 pb-8">
+                {ICE_IDENTITIES.map((id) => {
+                  const isPlaceholder = id.url === "WHATSAPP_PLACEHOLDER";
+                  const isInternal = id.internal;
+                  const badge = (
+                    <span className="group relative inline-flex items-center gap-1 px-5 py-2.5 rounded-full border border-primary/20 bg-primary/5 hover:bg-primary/15 hover:border-primary/60 transition-all duration-300 cursor-pointer">
+                      <span className="absolute inset-0 rounded-full bg-primary/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                      <span className="relative text-white font-bold text-base tracking-tight">{id.label}</span>
+                      <span className="relative text-primary font-bold text-base tracking-tight">{id.suffix}</span>
+                      {!isPlaceholder && (
+                        <ExternalLink size={11} className="relative ml-1 text-primary/40 group-hover:text-primary transition-colors duration-300 opacity-0 group-hover:opacity-100" />
+                      )}
+                      <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-white/30 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        {isPlaceholder ? "Coming soon" : id.hint}
+                      </span>
+                    </span>
+                  );
 
-                    <span className="relative text-white font-bold text-base tracking-tight">
-                      {id.label}
-                    </span>
-                    <span className="relative text-primary font-bold text-base tracking-tight">
-                      {id.suffix}
-                    </span>
-                    <ExternalLink
-                      size={11}
-                      className="relative ml-1 text-primary/40 group-hover:text-primary transition-colors duration-300 opacity-0 group-hover:opacity-100"
-                    />
-
-                    {/* Hint label */}
-                    <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-white/30 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      {id.hint}
-                    </span>
-                  </a>
-                ))}
+                  if (isPlaceholder) {
+                    return <span key={id.label} className="opacity-50" data-testid={`link-ice-identity-${id.label.toLowerCase()}`}>{badge}</span>;
+                  }
+                  if (isInternal) {
+                    return (
+                      <a key={id.label} href={id.url} data-testid={`link-ice-identity-${id.label.toLowerCase()}`}>
+                        {badge}
+                      </a>
+                    );
+                  }
+                  return (
+                    <a key={id.label} href={id.url} target="_blank" rel="noopener noreferrer" data-testid={`link-ice-identity-${id.label.toLowerCase()}`}>
+                      {badge}
+                    </a>
+                  );
+                })}
               </div>
             </motion.div>
 

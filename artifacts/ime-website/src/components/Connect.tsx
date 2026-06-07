@@ -8,7 +8,7 @@ import {
   SiSoundcloud, 
   SiBeatstars 
 } from "react-icons/si";
-import { Mic2, Music2 } from "lucide-react"; // Using generic icons for Voloco and StarMaker
+import { Mic2, Music2, MessageCircle } from "lucide-react"; // Using generic icons for Voloco and StarMaker
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function Connect() {
@@ -73,6 +73,12 @@ export function Connect() {
       handle: "Iconic Media Entertainment",
       url: "https://soundcloud.com/iconic-media-entertainment",
     },
+    {
+      name: "WhatsApp",
+      icon: MessageCircle,
+      handle: "Icynigma",
+      url: "WHATSAPP_PLACEHOLDER",
+    },
   ];
 
   const containerVariants = {
@@ -125,12 +131,23 @@ export function Connect() {
               </div>
             );
 
+            const isPlaceholder = social.url === "WHATSAPP_PLACEHOLDER";
+
             return (
               <motion.div key={idx} variants={itemVariants}>
-                {social.url ? (
+                {social.url && !isPlaceholder ? (
                   <a href={social.url} target="_blank" rel="noopener noreferrer" className="block">
                     {content}
                   </a>
+                ) : isPlaceholder ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="opacity-50 cursor-default">{content}</div>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="bg-white text-black font-semibold px-4 py-2 border-none">
+                      <p>Coming soon</p>
+                    </TooltipContent>
+                  </Tooltip>
                 ) : (
                   <Tooltip>
                     <TooltipTrigger asChild>
