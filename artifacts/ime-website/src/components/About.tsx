@@ -72,7 +72,8 @@ export function About() {
               Founded by{" "}
               <span className="text-white font-semibold">Inolofatseng G. Mokgoko</span>
               {" "}—{" "}
-              known as <span className="text-primary font-semibold">Icynigma</span> and <span className="text-primary font-semibold">Exclusively Iconic_Beatz</span>{" "}
+              known as <span className="text-white font-semibold">Icynigma</span> and{" "}
+              <span className="text-primary font-semibold">Iconic.ice</span>{" "}
               — COO, artist, and a forward-thinker who plays the long game. We don't just make music; we build solid, long-lasting foundations for artists. Feet on the ground. Eyes on the stars.
             </motion.p>
 
