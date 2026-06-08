@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Headphones, X, Play, Pause, Square, Volume2, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Headphones,
+  X,
+  Play,
+  Pause,
+  Square,
+  Volume2,
+  ChevronDown,
+  ChevronUp,
+  AlignLeft,
+} from "lucide-react";
 
 const SITE_SUMMARY = `
 Alright. Settle in. We are about to take a little tour of Ice Media Entertainment. Also known as... I.M.E. Yes, like the letter. Very clean. Very intentional. Very Ice.
@@ -67,9 +77,11 @@ export function AudioGuide() {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<ReadingState>("idle");
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
+  const [activeText, setActiveText] = useState<string>("");
+  const [charIndex, setCharIndex] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [rate, setRate] = useState(0.75);
-  const [autoStarted, setAutoStarted] = useState(false);
+  const [readAlong, setReadAlong] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const supported = typeof window !== "undefined" && "speechSynthesis" in window;
 
@@ -78,6 +90,8 @@ export function AudioGuide() {
     window.speechSynthesis.cancel();
     setState("idle");
     setActiveLabel(null);
+    setActiveText("");
+    setCharIndex(0);
   }, [supported]);
 
   useEffect(() => {
@@ -86,43 +100,40 @@ export function AudioGuide() {
     };
   }, [supported]);
 
-  const speak = useCallback((text: string, label: string, speed = rate) => {
-    if (!supported) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = speed;
-    utter.pitch = 1;
-    utter.lang = "en-US";
-    utter.onstart = () => { setState("playing"); setActiveLabel(label); };
-    utter.onend = () => { setState("idle"); setActiveLabel(null); };
-    utter.onerror = () => { setState("idle"); setActiveLabel(null); };
-    utteranceRef.current = utter;
-    window.speechSynthesis.speak(utter);
-  }, [rate, supported]);
-
-  // Auto-play the full summary in the background on first user interaction
-  useEffect(() => {
-    if (!supported || autoStarted) return;
-
-    const tryAutoPlay = () => {
-      if (autoStarted) return;
-      setAutoStarted(true);
-      speak(SITE_SUMMARY, "Full Summary", 0.75);
-    };
-
-    // Web Speech API requires a user gesture on some browsers.
-    // Listen for the first interaction, then start.
-    const events = ["click", "keydown", "touchstart", "scroll"] as const;
-    const handler = () => {
-      tryAutoPlay();
-      events.forEach((e) => window.removeEventListener(e, handler));
-    };
-    events.forEach((e) => window.addEventListener(e, handler, { once: true, passive: true }));
-
-    return () => {
-      events.forEach((e) => window.removeEventListener(e, handler));
-    };
-  }, [supported, autoStarted, speak]);
+  const speak = useCallback(
+    (text: string, label: string) => {
+      if (!supported) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.rate = rate;
+      utter.pitch = 1;
+      utter.lang = "en-US";
+      utter.onstart = () => {
+        setState("playing");
+        setActiveLabel(label);
+        setActiveText(text);
+        setCharIndex(0);
+      };
+      utter.onboundary = (e) => {
+        if (e.name === "word") setCharIndex(e.charIndex);
+      };
+      utter.onend = () => {
+        setState("idle");
+        setActiveLabel(null);
+        setActiveText("");
+        setCharIndex(0);
+      };
+      utter.onerror = () => {
+        setState("idle");
+        setActiveLabel(null);
+        setActiveText("");
+        setCharIndex(0);
+      };
+      utteranceRef.current = utter;
+      window.speechSynthesis.speak(utter);
+    },
+    [rate, supported]
+  );
 
   const togglePause = useCallback(() => {
     if (!supported) return;
@@ -143,7 +154,7 @@ export function AudioGuide() {
     speak(SITE_SUMMARY, "Full Summary");
   };
 
-  const handleSection = (section: typeof SECTIONS[0]) => {
+  const handleSection = (section: (typeof SECTIONS)[0]) => {
     if (state !== "idle" && activeLabel === section.label) {
       togglePause();
       return;
@@ -153,22 +164,27 @@ export function AudioGuide() {
 
   if (!supported) return null;
 
+  const isPlaying = state === "playing";
+  const isActive = state !== "idle";
+
   return (
     <>
+      {/* Floating toggle button */}
       <motion.button
         data-testid="button-audio-guide-toggle"
-        onClick={() => { setOpen((v) => !v); if (open) stop(); }}
+        onClick={() => setOpen((v) => !v)}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-black flex items-center justify-center shadow-2xl shadow-primary/30"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         title="Audio Guide"
       >
         {open ? <X size={22} /> : <Headphones size={22} />}
-        {state === "playing" && (
+        {isPlaying && (
           <span className="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-black animate-pulse" />
         )}
       </motion.button>
 
+      {/* Slide-in panel — closing this does NOT stop audio */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -181,8 +197,10 @@ export function AudioGuide() {
             <div className="px-5 pt-5 pb-4 border-b border-white/5">
               <div className="flex items-center gap-2 mb-1">
                 <Volume2 size={16} className="text-primary" />
-                <span className="text-sm font-bold text-white tracking-wide uppercase">Audio Guide</span>
-                {state === "playing" && (
+                <span className="text-sm font-bold text-white tracking-wide uppercase">
+                  Audio Guide
+                </span>
+                {isPlaying && (
                   <span className="ml-auto flex items-center gap-1 text-xs text-green-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse inline-block" />
                     Playing
@@ -192,12 +210,17 @@ export function AudioGuide() {
                   <span className="ml-auto text-xs text-white/40">Paused</span>
                 )}
               </div>
-              <p className="text-xs text-white/40">Let the site speak for itself.</p>
+              <p className="text-xs text-white/40">
+                Let the site speak for itself.
+              </p>
             </div>
 
             <div className="p-5 space-y-4">
+              {/* Full summary */}
               <div>
-                <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Full Site Summary</p>
+                <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">
+                  Full Site Summary
+                </p>
                 <div className="flex items-center gap-2">
                   <button
                     data-testid="button-play-summary"
@@ -205,14 +228,20 @@ export function AudioGuide() {
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-black font-semibold text-sm transition-opacity hover:opacity-90"
                   >
                     {state === "playing" && activeLabel === "Full Summary" ? (
-                      <><Pause size={15} /> Pause</>
+                      <>
+                        <Pause size={15} /> Pause
+                      </>
                     ) : state === "paused" && activeLabel === "Full Summary" ? (
-                      <><Play size={15} /> Resume</>
+                      <>
+                        <Play size={15} /> Resume
+                      </>
                     ) : (
-                      <><Play size={15} /> Play Summary</>
+                      <>
+                        <Play size={15} /> Play Summary
+                      </>
                     )}
                   </button>
-                  {state !== "idle" && (
+                  {isActive && (
                     <button
                       data-testid="button-stop"
                       onClick={stop}
@@ -225,6 +254,28 @@ export function AudioGuide() {
                 </div>
               </div>
 
+              {/* Read Along toggle */}
+              <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-white/5">
+                <div className="flex items-center gap-2">
+                  <AlignLeft size={14} className={readAlong ? "text-primary" : "text-white/40"} />
+                  <span className="text-sm font-medium text-white/70">Read Along</span>
+                </div>
+                <button
+                  data-testid="button-read-along-toggle"
+                  onClick={() => setReadAlong((v) => !v)}
+                  className={`relative w-10 h-5 rounded-full transition-colors duration-300 ${
+                    readAlong ? "bg-primary" : "bg-white/20"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${
+                      readAlong ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Section reader */}
               <div>
                 <button
                   data-testid="button-toggle-sections"
@@ -244,32 +295,42 @@ export function AudioGuide() {
                       className="overflow-hidden space-y-1.5"
                     >
                       {SECTIONS.map((section) => {
-                        const isActive = activeLabel === section.label;
+                        const isSectionActive = activeLabel === section.label;
                         return (
                           <button
                             key={section.label}
-                            data-testid={`button-read-section-${section.label.toLowerCase().replace(/\s+/g, "-")}`}
+                            data-testid={`button-read-section-${section.label
+                              .toLowerCase()
+                              .replace(/\s+/g, "-")}`}
                             onClick={() => handleSection(section)}
                             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all
-                              ${isActive
-                                ? "bg-primary/20 text-primary border border-primary/30"
-                                : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-transparent"
+                              ${
+                                isSectionActive
+                                  ? "bg-primary/20 text-primary border border-primary/30"
+                                  : "bg-white/5 text-white/70 hover:bg-white/10 hover:text-white border border-transparent"
                               }`}
                           >
                             <span>{section.label}</span>
-                            {isActive && state === "playing" && (
+                            {isSectionActive && state === "playing" && (
                               <span className="flex gap-0.5 items-end h-4">
                                 {[0, 1, 2].map((i) => (
                                   <span
                                     key={i}
                                     className="w-0.5 bg-primary rounded-full animate-bounce"
-                                    style={{ height: `${8 + i * 4}px`, animationDelay: `${i * 0.15}s` }}
+                                    style={{
+                                      height: `${8 + i * 4}px`,
+                                      animationDelay: `${i * 0.15}s`,
+                                    }}
                                   />
                                 ))}
                               </span>
                             )}
-                            {isActive && state === "paused" && <Pause size={12} className="text-primary" />}
-                            {!isActive && <Play size={12} className="opacity-40" />}
+                            {isSectionActive && state === "paused" && (
+                              <Pause size={12} className="text-primary" />
+                            )}
+                            {!isSectionActive && (
+                              <Play size={12} className="opacity-40" />
+                            )}
                           </button>
                         );
                       })}
@@ -278,8 +339,11 @@ export function AudioGuide() {
                 </AnimatePresence>
               </div>
 
+              {/* Speed */}
               <div>
-                <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">Speed</p>
+                <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">
+                  Speed
+                </p>
                 <div className="flex gap-2">
                   {[0.75, 1, 1.25, 1.5].map((r) => (
                     <button
@@ -287,12 +351,61 @@ export function AudioGuide() {
                       data-testid={`button-speed-${r}`}
                       onClick={() => setRate(r)}
                       className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all
-                        ${rate === r ? "bg-primary text-black" : "bg-white/5 text-white/50 hover:bg-white/10"}`}
+                        ${
+                          rate === r
+                            ? "bg-primary text-black"
+                            : "bg-white/5 text-white/50 hover:bg-white/10"
+                        }`}
                     >
                       {r}x
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Read Along subtitle bar — fixed at the bottom, non-blocking */}
+      <AnimatePresence>
+        {readAlong && isActive && activeText && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 16 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-0 left-0 right-0 z-40 pointer-events-none"
+          >
+            <div className="mx-auto max-w-3xl px-6 pb-3 pt-2">
+              <div className="rounded-xl bg-black/80 backdrop-blur-md border border-white/10 px-5 py-3">
+                <p className="text-sm leading-relaxed text-center text-white/90 font-medium select-none">
+                  {activeText.split(" ").map((word, i) => {
+                    const wordStart = activeText
+                      .split(" ")
+                      .slice(0, i)
+                      .join(" ")
+                      .length + (i > 0 ? 1 : 0);
+                    const isCurrent =
+                      wordStart <= charIndex &&
+                      charIndex < wordStart + word.length;
+                    return (
+                      <span
+                        key={i}
+                        className={`transition-colors duration-150 ${
+                          isCurrent
+                            ? "text-primary font-bold"
+                            : wordStart < charIndex
+                            ? "text-white/40"
+                            : "text-white/70"
+                        }`}
+                      >
+                        {word}
+                        {i < activeText.split(" ").length - 1 ? " " : ""}
+                      </span>
+                    );
+                  })}
+                </p>
               </div>
             </div>
           </motion.div>
