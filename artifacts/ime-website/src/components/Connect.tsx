@@ -109,9 +109,18 @@ export function Connect() {
           className="mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-black mb-6">Let's Connect</h2>
-          <p className="text-xl text-white/60 max-w-2xl mx-auto">
+          <p className="text-xl text-white/60 max-w-2xl mx-auto mb-6">
             Ready to take your music to the next level? Tap in with the crew below.
           </p>
+          <a
+            href="#contact"
+            className="group inline-flex items-center gap-1 px-5 py-2.5 rounded-full border border-primary/20 bg-primary/5 hover:bg-primary/15 hover:border-primary/60 transition-all duration-300 relative"
+          >
+            <span className="absolute inset-0 rounded-full bg-primary/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            <span className="relative text-white font-bold text-base tracking-tight">iconicrecords</span>
+            <span className="relative text-primary font-bold text-base tracking-tight">.ice</span>
+            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-white/30 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">All Links</span>
+          </a>
         </motion.div>
 
         <motion.div 

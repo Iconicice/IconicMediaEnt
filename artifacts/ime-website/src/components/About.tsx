@@ -26,13 +26,6 @@ const ICE_IDENTITIES = [
     url: "WHATSAPP_PLACEHOLDER",
     hint: "WhatsApp",
   },
-  {
-    label: "iconicrecords",
-    suffix: ".ice",
-    url: "#contact",
-    hint: "All Links",
-    internal: true,
-  },
 ];
 
 export function About() {

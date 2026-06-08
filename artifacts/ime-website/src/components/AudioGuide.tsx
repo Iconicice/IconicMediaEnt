@@ -69,6 +69,7 @@ export function AudioGuide() {
   const [activeLabel, setActiveLabel] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [rate, setRate] = useState(0.75);
+  const [autoStarted, setAutoStarted] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const supported = typeof window !== "undefined" && "speechSynthesis" in window;
 
@@ -85,11 +86,11 @@ export function AudioGuide() {
     };
   }, [supported]);
 
-  const speak = useCallback((text: string, label: string) => {
+  const speak = useCallback((text: string, label: string, speed = rate) => {
     if (!supported) return;
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = rate;
+    utter.rate = speed;
     utter.pitch = 1;
     utter.lang = "en-US";
     utter.onstart = () => { setState("playing"); setActiveLabel(label); };
@@ -98,6 +99,30 @@ export function AudioGuide() {
     utteranceRef.current = utter;
     window.speechSynthesis.speak(utter);
   }, [rate, supported]);
+
+  // Auto-play the full summary in the background on first user interaction
+  useEffect(() => {
+    if (!supported || autoStarted) return;
+
+    const tryAutoPlay = () => {
+      if (autoStarted) return;
+      setAutoStarted(true);
+      speak(SITE_SUMMARY, "Full Summary", 0.75);
+    };
+
+    // Web Speech API requires a user gesture on some browsers.
+    // Listen for the first interaction, then start.
+    const events = ["click", "keydown", "touchstart", "scroll"] as const;
+    const handler = () => {
+      tryAutoPlay();
+      events.forEach((e) => window.removeEventListener(e, handler));
+    };
+    events.forEach((e) => window.addEventListener(e, handler, { once: true, passive: true }));
+
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, handler));
+    };
+  }, [supported, autoStarted, speak]);
 
   const togglePause = useCallback(() => {
     if (!supported) return;
@@ -111,11 +136,7 @@ export function AudioGuide() {
   }, [state, supported]);
 
   const handleSummary = () => {
-    if (state === "playing" && activeLabel === "Full Summary") {
-      togglePause();
-      return;
-    }
-    if (state === "paused" && activeLabel === "Full Summary") {
+    if (state !== "idle" && activeLabel === "Full Summary") {
       togglePause();
       return;
     }
@@ -143,7 +164,7 @@ export function AudioGuide() {
         title="Audio Guide"
       >
         {open ? <X size={22} /> : <Headphones size={22} />}
-        {state === "playing" && !open && (
+        {state === "playing" && (
           <span className="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-black animate-pulse" />
         )}
       </motion.button>
@@ -161,6 +182,15 @@ export function AudioGuide() {
               <div className="flex items-center gap-2 mb-1">
                 <Volume2 size={16} className="text-primary" />
                 <span className="text-sm font-bold text-white tracking-wide uppercase">Audio Guide</span>
+                {state === "playing" && (
+                  <span className="ml-auto flex items-center gap-1 text-xs text-green-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse inline-block" />
+                    Playing
+                  </span>
+                )}
+                {state === "paused" && (
+                  <span className="ml-auto text-xs text-white/40">Paused</span>
+                )}
               </div>
               <p className="text-xs text-white/40">Let the site speak for itself.</p>
             </div>
@@ -193,12 +223,6 @@ export function AudioGuide() {
                     </button>
                   )}
                 </div>
-                {state !== "idle" && activeLabel === "Full Summary" && (
-                  <p className="mt-2 text-xs text-primary flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block" />
-                    {state === "playing" ? "Reading summary…" : "Paused"}
-                  </p>
-                )}
               </div>
 
               <div>

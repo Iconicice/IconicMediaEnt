@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "PVMw8oWQRh_ie6-f3q9uF"
+uri = "file://artifacts/ime-website/public/images/studio-bg.png"
+type = "image"
+title = "Abstract dark studio background"
+
+[[generated]]
+id = "MEloHYtTfH4lnLBtUI52d"
+uri = "file://artifacts/ime-website/public/images/soundwaves.png"
+type = "image"
+title = "Abstract cyan soundwaves"
+
+[[generated]]
+id = "lXXbRjpym2M8JRWtejiTO"
+uri = "file://artifacts/ime-website/public/images/crystal.png"
+type = "image"
+title = "Icy cyan abstract crystal"
