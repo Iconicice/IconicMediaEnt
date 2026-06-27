@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import logoSrc from "@assets/STK-20241113-WA0002_1780890871837.webp";
+import { useAuth } from "@workspace/replit-auth-web";
 
 type Phase = "dancing" | "center-out" | "at-ime" | "ime-out";
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isLoading, isAuthenticated, login, logout } = useAuth();
 
   // Teleport state machine
   const [phase, setPhase] = useState<Phase>("dancing");
@@ -203,7 +205,7 @@ export function Navigation() {
           </AnimatePresence>
         </div>
 
-        {/* ── RIGHT: Desktop nav links ── */}
+        {/* ── RIGHT: Desktop nav links + auth ── */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <a
@@ -214,6 +216,23 @@ export function Navigation() {
               {link.name}
             </a>
           ))}
+          {!isLoading && (
+            isAuthenticated ? (
+              <button
+                onClick={logout}
+                className="text-sm font-medium text-white/70 hover:text-white transition-colors border border-white/20 hover:border-white/50 rounded-full px-4 py-1.5"
+              >
+                Log out{user?.firstName ? ` (${user.firstName})` : ""}
+              </button>
+            ) : (
+              <button
+                onClick={login}
+                className="text-sm font-semibold text-background bg-primary hover:bg-primary/90 transition-colors rounded-full px-4 py-1.5"
+              >
+                Log in
+              </button>
+            )
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -244,6 +263,23 @@ export function Navigation() {
                 {link.name}
               </a>
             ))}
+            {!isLoading && (
+              isAuthenticated ? (
+                <button
+                  onClick={logout}
+                  className="text-lg font-medium text-white/70 hover:text-white transition-colors text-left"
+                >
+                  Log out{user?.firstName ? ` (${user.firstName})` : ""}
+                </button>
+              ) : (
+                <button
+                  onClick={login}
+                  className="text-lg font-semibold text-background bg-primary hover:bg-primary/90 transition-colors rounded-full px-6 py-2 self-start"
+                >
+                  Log in
+                </button>
+              )
+            )}
           </motion.div>
         )}
       </AnimatePresence>

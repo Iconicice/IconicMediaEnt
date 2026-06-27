@@ -27,4 +27,42 @@ export const AssistantChatBody = zod.object({
 }))
 })
 
+/**
+ * @summary Get the currently authenticated user
+ */
+export const GetCurrentAuthUserResponse = zod.object({
+  "user": zod.union([zod.object({
+    "id": zod.string(),
+    "email": zod.union([zod.string().email(), zod.null()]),
+    "firstName": zod.union([zod.string(), zod.null()]),
+    "lastName": zod.union([zod.string(), zod.null()]),
+    "profileImageUrl": zod.union([zod.string(), zod.null()])
+  }), zod.null()])
+})
+
+/**
+ * @summary Exchange a mobile OIDC code for a session token
+ */
+export const ExchangeMobileAuthorizationCodeBody = zod.object({
+  "code": zod.string().min(1),
+  "code_verifier": zod.string().min(1),
+  "redirect_uri": zod.string().min(1).url(),
+  "state": zod.string().min(1),
+  "nonce": zod.string().min(1).optional()
+})
+
+/**
+ * @summary Exchange a mobile OIDC code for a session token
+ */
+export const ExchangeMobileAuthorizationCodeResponse = zod.object({
+  "token": zod.string()
+})
+
+/**
+ * @summary Delete a mobile session token
+ */
+export const LogoutMobileSessionResponse = zod.object({
+  "success": zod.literal(true)
+})
+
 
